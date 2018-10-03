@@ -34,6 +34,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAResource;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import org.mobicents.slee.container.transaction.SleeTransaction;
 import org.mobicents.slee.container.transaction.TransactionContext;
 
@@ -42,6 +43,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 /**
  * Implementation of the {@link SleeTransaction}.
  * @author martins
+ * @author ajimenez
  *
  */
 public class SleeTransactionImpl implements SleeTransaction {
@@ -54,7 +56,7 @@ public class SleeTransactionImpl implements SleeTransaction {
 	/**
 	 * caching the wrapped transaction id
 	 */
-	private final String transactionId;
+	private final Uid transactionUid;
 
 	/**
 	 * the transaction manager
@@ -80,7 +82,7 @@ public class SleeTransactionImpl implements SleeTransaction {
 	public SleeTransactionImpl(TransactionImple transaction,
 			TransactionContext txContext, SleeTransactionManagerImpl transactionManager) {
 		this.transaction = transaction;
-		this.transactionId = transaction.get_uid().toString();
+		this.transactionUid = transaction.get_uid();
 		this.txContext = txContext;
 		this.transactionManager = transactionManager;
 	}
@@ -246,19 +248,19 @@ public class SleeTransactionImpl implements SleeTransaction {
 
 	@Override
 	public String toString() {
-		return transactionId;
+		return transactionUid.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return transactionId.hashCode();
+		return transactionUid.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass() == this.getClass()) {
-			return ((SleeTransactionImpl) obj).transactionId
-					.equals(this.transactionId);
+			return ((SleeTransactionImpl) obj).transactionUid
+					.equals(this.transactionUid);
 		} else {
 			return false;
 		}
