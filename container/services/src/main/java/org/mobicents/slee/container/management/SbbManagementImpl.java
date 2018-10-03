@@ -52,13 +52,11 @@ import org.mobicents.slee.container.component.sbb.SbbComponent;
 import org.mobicents.slee.container.component.service.ServiceComponent;
 import org.mobicents.slee.container.deployment.SbbClassCodeGenerator;
 import org.mobicents.slee.container.resource.ResourceAdaptorEntity;
-import org.mobicents.slee.container.sbb.SbbObjectPool;
 import org.mobicents.slee.container.transaction.SleeTransactionManager;
 import org.mobicents.slee.container.transaction.TransactionalAction;
 import org.mobicents.slee.runtime.facilities.SbbAlarmFacilityImpl;
 import org.mobicents.slee.runtime.sbb.SbbObjectPoolImpl;
 import org.mobicents.slee.runtime.sbb.SbbObjectPoolManagementImpl;
-import org.mobicents.slee.runtime.sbb.SbbSummaObjectPoolManagementImpl;
 
 /**
  * Manages sbbs in container
@@ -72,14 +70,11 @@ public class SbbManagementImpl extends AbstractSleeContainerModule implements Sb
 	private static final Logger logger = Logger.getLogger(SbbManagementImpl.class);
 	
 	private SbbObjectPoolManagementImpl sbbPoolManagement;
-    private SbbSummaObjectPoolManagementImpl sbbSummaPoolManagement;
 	
 	@Override
 	public void sleeInitialization() {
-		//sbbPoolManagement = new SbbObjectPoolManagementImpl(sleeContainer);
-		//sbbPoolManagement.register();
-
-		sbbSummaPoolManagement =new SbbSummaObjectPoolManagementImpl(sleeContainer);
+		sbbPoolManagement = new SbbObjectPoolManagementImpl(sleeContainer);
+		sbbPoolManagement.register();
 	}
 	
 	/* (non-Javadoc)
@@ -87,18 +82,11 @@ public class SbbManagementImpl extends AbstractSleeContainerModule implements Sb
 	 */
 	public void serviceInstall(ServiceComponent serviceComponent) {
 		// create object pools
-		/*for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
+		for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
 			// create the pool for the given SbbID
 			sbbPoolManagement.createObjectPool(serviceComponent.getServiceID(), sleeContainer.getComponentRepository().getComponentByID(sbbID),
 					sleeContainer.getTransactionManager());
 		}
-		*/
-
-        for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
-            // create the pool for the given SbbID
-            sbbSummaPoolManagement.createObjectPool(serviceComponent.getServiceID(), sleeContainer.getComponentRepository().getComponentByID(sbbID),
-                    sleeContainer.getTransactionManager());
-        }
 	}
 	
 	/* (non-Javadoc)
@@ -106,25 +94,18 @@ public class SbbManagementImpl extends AbstractSleeContainerModule implements Sb
 	 */
 	public void serviceUninstall(ServiceComponent serviceComponent) {
 		// remove sbb object pools
-		/*for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
+		for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
 			// remove the pool for the given SbbID
 			sbbPoolManagement.removeObjectPool(serviceComponent.getServiceID(), sleeContainer.getComponentRepository().getComponentByID(sbbID),
 					sleeContainer.getTransactionManager());
 		}
-        */
-        for (SbbID sbbID : serviceComponent.getSbbIDs(sleeContainer.getComponentRepository())) {
-            // remove the pool for the given SbbID
-            sbbSummaPoolManagement.removeObjectPool(serviceComponent.getServiceID(), sleeContainer.getComponentRepository().getComponentByID(sbbID),
-                    sleeContainer.getTransactionManager());
-        }
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.container.management.SbbManagement#getObjectPool(javax.slee.ServiceID, javax.slee.SbbID)
 	 */
-	public SbbObjectPool getObjectPool(ServiceID serviceID, SbbID sbbID) {
-		//return sbbPoolManagement.getObjectPool(serviceID, sbbID);
-        return sbbSummaPoolManagement.getObjectPool(serviceID, sbbID);
+	public SbbObjectPoolImpl getObjectPool(ServiceID serviceID, SbbID sbbID) {
+		return sbbPoolManagement.getObjectPool(serviceID, sbbID);
 	}
 	
 	/*

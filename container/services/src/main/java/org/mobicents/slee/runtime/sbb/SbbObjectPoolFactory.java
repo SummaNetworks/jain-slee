@@ -71,7 +71,7 @@ public class SbbObjectPoolFactory implements PoolableObjectFactory {
         /*
          * NOTE. We must not call sbbActivate in here This is because this
          * method would get called when borrowing an sbbObject in order to do a
-         * sbbCreate - in which case it is illegal to call sbbActivate before
+         * sbbCreate - in which case it is illegal to call sbbActivat before
          * sbbCreate - Tim
          */
     	

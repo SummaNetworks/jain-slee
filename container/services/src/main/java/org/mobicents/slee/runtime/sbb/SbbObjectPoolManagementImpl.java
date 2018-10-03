@@ -60,16 +60,16 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 		// create pool config mbean with default pool configuration
 		config = new GenericObjectPool.Config();
 		config.maxActive = -1;
-		config.maxIdle = 100;
+		config.maxIdle = 50;
 		config.maxWait = -1;
 		config.minEvictableIdleTimeMillis = 60000;
-		config.minIdle = 10;
+		config.minIdle = 1;
 		config.numTestsPerEvictionRun = -1;
 		config.testOnBorrow = true;
 		config.testOnReturn = true;
 		config.testWhileIdle = false;
 		config.timeBetweenEvictionRunsMillis = 300000;
-		config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_GROW;
+		config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
 		// create pools map
 		pools = new ConcurrentHashMap<ObjectPoolMapKey, SbbObjectPoolImpl>();
 	}
