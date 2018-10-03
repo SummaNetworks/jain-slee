@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.jainslee.core</groupId>
 		<artifactId>standard-components-parent</artifactId>
-		<version>2.8.113-summa-1</version>
+		<version>2.8.113-summa-1-snapshot</version>
 	</parent>
 	
 	<artifactId>standard-components-du</artifactId>

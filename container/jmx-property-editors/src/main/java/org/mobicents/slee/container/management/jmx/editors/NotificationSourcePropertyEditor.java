@@ -45,7 +45,7 @@ public class NotificationSourcePropertyEditor extends TextPropertyEditorSupport 
         try {
             
         	String nsString = text;
-        	String nsType = nsString.substring(0, nsString.indexOf('['));
+            String nsType = nsString.substring(0, nsString.indexOf('['));
         	nsString = nsString.substring(nsType.length()+1,nsString.length()-1);
         	
         	if (nsType.equalsIgnoreCase("ProfileTableNotification")) {
