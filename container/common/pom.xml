@@ -55,14 +55,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-
-        <dependency>
-            <groupId>org.vibur</groupId>
-            <artifactId>vibur-object-pool</artifactId>
-            <version>21.2</version>
-        </dependency>
-					
 	</dependencies>
 	
 </project>
