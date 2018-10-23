@@ -25,6 +25,7 @@
  */
 package org.mobicents.slee.container.eventrouter;
 
+import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 
 /**
@@ -39,7 +40,7 @@ public interface EventRouterExecutorMapper {
 	 * 
 	 * @param executors
 	 */
-	public void setExecutors(EventRouterExecutor[] executors);
+	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer);
 
 	/**
 	 * Retrieves the executor for the activity context with the specified
@@ -50,5 +51,11 @@ public interface EventRouterExecutorMapper {
 	 */
 	public EventRouterExecutor getExecutor(
 			ActivityContextHandle activityContextHandle);
+
+	/**
+	 * Returns an executor to the EventRouterExecutor
+	 * @param executor
+	 */
+	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle activityContextHandle);
 
 }

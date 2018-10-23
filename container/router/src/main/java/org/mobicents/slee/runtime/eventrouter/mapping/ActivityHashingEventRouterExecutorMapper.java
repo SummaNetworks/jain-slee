@@ -52,4 +52,8 @@ public class ActivityHashingEventRouterExecutorMapper extends
 				% executors.length];
 	}
 
+	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach) {
+		//Nothing to do
+	}
+
 }

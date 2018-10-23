@@ -81,13 +81,13 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 		// create new ones
 		this.executors = new EventRouterExecutor[configuration.getEventRouterThreads()];
 		for (int i = 0; i < configuration.getEventRouterThreads(); i++) {
-			this.executors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-EventRouterExecutor-"+i), sleeContainer);
-		}	
+			this.executors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-EventRouterExecutor-"+i), sleeContainer, i);
+		}
 		// create mapper
 		try {
 			Class<?> executorMapperClass = Class.forName(configuration.getExecutorMapperClassName());
 			executorMapper = (EventRouterExecutorMapper) executorMapperClass.newInstance();
-			executorMapper.setExecutors(executors);
+			executorMapper.setExecutors(executors, sleeContainer);
 		} catch (Throwable e) {
 			throw new IllegalStateException("Unable to create event router executor mapper class instance",e);
 		}		

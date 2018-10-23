@@ -27,6 +27,7 @@ package org.mobicents.slee.runtime.eventrouter.mapping;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
 
@@ -46,12 +47,16 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	@Override
-	public void setExecutors(EventRouterExecutor[] executors) {
-		super.setExecutors(executors);
+	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer) {
+		super.setExecutors(executors, sleeContainer);
 		//reset index
 		index = new AtomicInteger(0);
 	}
-	
+
+	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach) {
+		//Nothing to do
+	}
+
 	/**
 	 * Computes the index of the next executor to retrieve. Adaptation of the {@link AtomicInteger} incrementAndGet() code.
 	 *  

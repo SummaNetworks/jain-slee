@@ -25,8 +25,11 @@
  */
 package org.mobicents.slee.container.eventrouter;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.event.EventContext;
 import org.mobicents.slee.container.eventrouter.stats.EventRouterExecutorStatistics;
@@ -40,6 +43,7 @@ import org.mobicents.slee.container.eventrouter.stats.EventRouterExecutorStatist
  * 
  */
 public interface EventRouterExecutor {
+	public static final Logger executorLogger = LogManager.getLogger("EXECUTOR_LOGGER");
 
 	/**
 	 * Indicates to the executor that it was mapped to the activity with the
@@ -91,4 +95,9 @@ public interface EventRouterExecutor {
 	 */
 	public void shutdown();
 
+	public Integer getNumber();
+
+	public Date getAssignationDate();
+
+	public void setAssignationDate(Date assignationDate);
 }
