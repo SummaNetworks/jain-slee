@@ -25,6 +25,7 @@ package org.mobicents.slee.runtime.activity;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import javax.slee.Address;
 import javax.slee.EventTypeID;
@@ -44,6 +45,7 @@ import org.mobicents.slee.container.event.EventContext;
 import org.mobicents.slee.container.event.EventProcessingFailedCallback;
 import org.mobicents.slee.container.event.EventProcessingSucceedCallback;
 import org.mobicents.slee.container.event.EventUnreferencedCallback;
+import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
 import org.mobicents.slee.container.facilities.ActivityContextNamingFacility;
 import org.mobicents.slee.container.facilities.TimerFacility;
 import org.mobicents.slee.container.resource.ResourceAdaptorActivityContextHandle;
@@ -570,6 +572,7 @@ public class ActivityContextImpl implements ActivityContext {
 
 	public void activityEnded() {
 
+		EventRouterExecutor eventRouterExecutor = getLocalActivityContext().getExecutorService();
 		// remove references to this AC in timer and ac naming facility
 		removeNamingBindings();
 		removeFromTimers(); // Spec 7.3.4.1 Step 10
@@ -593,6 +596,9 @@ public class ActivityContextImpl implements ActivityContext {
 							.getActivityHandle());
 		}
 
+		logger.debug("ActivityContextImpl::ReturnExecutor::" + eventRouterExecutor.getNumber());
+		EventRouterExecutor.executorLogger.debug("ActivityContextImpl::ReturnExecutor::" + eventRouterExecutor.getNumber());
+		sleeContainer.getEventRouter().getEventRouterExecutorMapper().returnExecutor(eventRouterExecutor, this.getActivityContextHandle());
 	}
 
 	private void fireEvent(EventContext event, TransactionContext txContext) {

@@ -30,6 +30,7 @@ import org.mobicents.slee.runtime.eventrouter.routingtask.EventRoutingTaskImpl;
 import org.mobicents.slee.runtime.eventrouter.stats.EventRouterExecutorStatisticsImpl;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,7 +48,9 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 	private final ExecutorService executor;
 	private final EventRouterExecutorStatisticsImpl stats;
 	private final SleeContainer sleeContainer;
-	
+	private Integer number = 0;
+	private Date assignationDate;
+
 	/**
 	 * Used to collect executing stats of an {@link EventRoutingTask}.
 	 * 
@@ -105,13 +108,14 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 	/**
 	 * 
 	 */
-	public EventRouterExecutorImpl(boolean collectStats, ThreadFactory threadFactory, SleeContainer sleeContainer) {
+	public EventRouterExecutorImpl(boolean collectStats, ThreadFactory threadFactory, SleeContainer sleeContainer, Integer number) {
 		final LinkedBlockingQueue<Runnable> executorQueue = new LinkedBlockingQueue<Runnable>();
 		this.executor = new ThreadPoolExecutor(1, 1,
                         0L, TimeUnit.MILLISECONDS,
                         executorQueue, threadFactory);
 		stats = collectStats ? new EventRouterExecutorStatisticsImpl(Collections.unmodifiableCollection(executorQueue)) : null;
 		this.sleeContainer = sleeContainer;
+		this.number = number;
 	}
 
 	/*
@@ -192,4 +196,15 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 		}
 	}
 
+	public Integer getNumber() {
+		return number;
+	}
+
+	public Date getAssignationDate() {
+		return assignationDate;
+	}
+
+	public void setAssignationDate(Date assignationDate) {
+		this.assignationDate = assignationDate;
+	}
 }

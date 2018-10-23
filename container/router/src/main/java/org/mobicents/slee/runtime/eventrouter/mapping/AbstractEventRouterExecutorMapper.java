@@ -25,6 +25,7 @@
  */
 package org.mobicents.slee.runtime.eventrouter.mapping;
 
+import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutorMapper;
@@ -38,6 +39,7 @@ public abstract class AbstractEventRouterExecutorMapper implements
 		EventRouterExecutorMapper {
 
 	protected EventRouterExecutor[] executors;
+	private SleeContainer sleeContainer;
 
 	/*
 	 * (non-Javadoc)
@@ -57,8 +59,12 @@ public abstract class AbstractEventRouterExecutorMapper implements
 	 * #setExecutors
 	 * (org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
-	public void setExecutors(EventRouterExecutor[] executors) {
+	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer) {
 		this.executors = executors;
+		this.sleeContainer = sleeContainer;
 	}
 
+	public abstract void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach);
+
+	public SleeContainer getSleeContainer() {return sleeContainer;};
 }
