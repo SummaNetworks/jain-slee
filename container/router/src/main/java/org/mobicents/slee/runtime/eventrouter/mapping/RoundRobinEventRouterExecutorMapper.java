@@ -25,6 +25,7 @@
  */
 package org.mobicents.slee.runtime.eventrouter.mapping;
 
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mobicents.slee.container.SleeContainer;
@@ -47,13 +48,13 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	@Override
-	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer) {
-		super.setExecutors(executors, sleeContainer);
+	public void setExecutors(EventRouterExecutor[] executors) {
+		super.setExecutors(executors);
 		//reset index
 		index = new AtomicInteger(0);
 	}
 
-	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach) {
+	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach) {
 		//Nothing to do
 	}
 

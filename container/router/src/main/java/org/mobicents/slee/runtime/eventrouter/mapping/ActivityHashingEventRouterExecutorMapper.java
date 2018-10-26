@@ -28,6 +28,8 @@ package org.mobicents.slee.runtime.eventrouter.mapping;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
 
+import java.util.Date;
+
 /**
  * Simple {@link EventRouterExecutor} to {@link ActivityContextHandle} mapping
  * using the hashcode of the latter.
@@ -52,7 +54,7 @@ public class ActivityHashingEventRouterExecutorMapper extends
 				% executors.length];
 	}
 
-	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach) {
+	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach) {
 		//Nothing to do
 	}
 
