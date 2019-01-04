@@ -113,6 +113,7 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 		this.executor = new ThreadPoolExecutor(1, 1,
                         0L, TimeUnit.MILLISECONDS,
                         executorQueue, threadFactory);
+
 		stats = collectStats ? new EventRouterExecutorStatisticsImpl(Collections.unmodifiableCollection(executorQueue)) : null;
 		this.sleeContainer = sleeContainer;
 		this.number = number;
@@ -206,5 +207,9 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 
 	public void setAssignationDate(Date assignationDate) {
 		this.assignationDate = assignationDate;
+	}
+
+	public Integer getQueueSize(){
+		return ((ThreadPoolExecutor) this.executor).getQueue().size();
 	}
 }

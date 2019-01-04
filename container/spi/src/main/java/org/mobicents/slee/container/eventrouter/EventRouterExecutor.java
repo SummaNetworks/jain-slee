@@ -43,7 +43,7 @@ import org.mobicents.slee.container.eventrouter.stats.EventRouterExecutorStatist
  * 
  */
 public interface EventRouterExecutor {
-	public static final Logger executorLogger = LogManager.getLogger("EXECUTOR_LOGGER");
+	Logger executorLogger = LogManager.getLogger("EXECUTOR_LOGGER");
 
 	/**
 	 * Indicates to the executor that it was mapped to the activity with the
@@ -51,7 +51,7 @@ public interface EventRouterExecutor {
 	 * 
 	 * @param ach
 	 */
-	public void activityMapped(ActivityContextHandle ach);
+	void activityMapped(ActivityContextHandle ach);
 	
 	/**
 	 * Indicates to the executor that it was unmapped to the activity with the
@@ -59,14 +59,14 @@ public interface EventRouterExecutor {
 	 * 
 	 * @param ach
 	 */
-	public void activityUnmapped(ActivityContextHandle ach);
+	void activityUnmapped(ActivityContextHandle ach);
 	
 	/**
 	 * Executes a misc {@link Runnable} task.
 	 * 
 	 * @param task
 	 */
-	public void execute(Runnable task);
+	void execute(Runnable task);
 
 	/**
 	 * Executes a misc {@link Runnable} task, blocking till execution ends.
@@ -75,29 +75,32 @@ public interface EventRouterExecutor {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public void executeNow(Runnable task) throws InterruptedException, ExecutionException;
+	void executeNow(Runnable task) throws InterruptedException, ExecutionException;
 	
 	/**
 	 * Retrieves the performance and load statistics for the executor.
 	 * 
 	 * @return null if the executor is not collecting stats.
 	 */
-	public EventRouterExecutorStatistics getStatistics();
+	EventRouterExecutorStatistics getStatistics();
 
 	/**
 	 * Routes the specified event.
 	 * @param event
 	 */
-	public void routeEvent(EventContext event);
+	void routeEvent(EventContext event);
 
 	/**
 	 * Shuts down the executor.
 	 */
-	public void shutdown();
+	void shutdown();
 
-	public Integer getNumber();
+	Integer getNumber();
 
-	public Date getAssignationDate();
+	Date getAssignationDate();
 
-	public void setAssignationDate(Date assignationDate);
+	void setAssignationDate(Date assignationDate);
+
+	Integer getQueueSize();
+
 }

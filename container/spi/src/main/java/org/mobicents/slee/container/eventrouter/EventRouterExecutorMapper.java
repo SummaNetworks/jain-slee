@@ -28,6 +28,8 @@ package org.mobicents.slee.container.eventrouter;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 
+import java.util.Date;
+
 /**
  * Maps {@link EventRouterExecutor} to Activity Contexts.
  * 
@@ -40,7 +42,7 @@ public interface EventRouterExecutorMapper {
 	 * 
 	 * @param executors
 	 */
-	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer);
+	void setExecutors(EventRouterExecutor[] executors);
 
 	/**
 	 * Retrieves the executor for the activity context with the specified
@@ -49,13 +51,14 @@ public interface EventRouterExecutorMapper {
 	 * @param activityContextHandle
 	 * @return
 	 */
-	public EventRouterExecutor getExecutor(
-			ActivityContextHandle activityContextHandle);
+	EventRouterExecutor getExecutor(ActivityContextHandle activityContextHandle);
 
 	/**
 	 * Returns an executor to the EventRouterExecutor
-	 * @param executor
+	 * @param executorNumber the number of the returned executor
+	 * @param assignationDate the date in which the executor was assigned to the task
+	 * @param  activityContextHandle the activity that is handling the event
 	 */
-	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle activityContextHandle);
+	void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle activityContextHandle);
 
 }

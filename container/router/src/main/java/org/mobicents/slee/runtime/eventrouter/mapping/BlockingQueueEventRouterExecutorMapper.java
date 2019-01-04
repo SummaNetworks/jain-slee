@@ -27,13 +27,12 @@ package org.mobicents.slee.runtime.eventrouter.mapping;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
-import org.mobicents.slee.runtime.eventrouter.EventRouterExecutorImpl;
-import org.mobicents.slee.util.concurrent.SleeThreadFactory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -47,23 +46,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BlockingQueueEventRouterExecutorMapper extends AbstractEventRouterExecutorMapper {
 	private static final Logger logger = LogManager.getLogger(BlockingQueueEventRouterExecutorMapper.class);
 
-	protected BlockingQueue<EventRouterExecutor> sleeBlockingQueue = new LinkedBlockingQueue<EventRouterExecutor>();
+	protected Map<Integer, EventRouterExecutor> allExecutors = new HashMap<Integer, EventRouterExecutor>();
+	protected BlockingQueue<Integer> freeExecutors = new LinkedBlockingQueue<Integer>();
+
 	/**
 	 * index use to iterate the executor's array
 	 */
 	protected AtomicInteger index = null;
+	protected Integer executorsSize = 0;
 	
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	@Override
-	public void setExecutors(EventRouterExecutor[] executors, SleeContainer sleeContainer) {
-		super.setExecutors(executors, sleeContainer);
+	public void setExecutors(EventRouterExecutor[] executors) {
+		super.setExecutors(executors);
+
 		for (EventRouterExecutor executor : executors) {
-			sleeBlockingQueue.offer(executor);
+			allExecutors.put(executor.getNumber(), executor);
+			//Adding numbers of the executors, the idea is to add and remove numbers from this array to see if they are free or not
+			freeExecutors.offer(executor.getNumber());
 		}
 
-		//reset index
+		executorsSize = allExecutors.size();
 		index = new AtomicInteger(0);
 	}
 
@@ -75,14 +80,20 @@ public class BlockingQueueEventRouterExecutorMapper extends AbstractEventRouterE
 			ActivityContextHandle activityContextHandle) {
 		try {
 			EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::getExecutor::ach:: "
-					+ activityContextHandle.getActivityHandle() + "::TAKE::" + sleeBlockingQueue.size());
+					+ activityContextHandle.getActivityHandle() + "::TAKE::" + freeExecutors.size());
 
-			EventRouterExecutor headOfQueue = sleeBlockingQueue.poll(1, TimeUnit.SECONDS);
+			Integer numberOfFreeExecutor = freeExecutors.poll(150, TimeUnit.MILLISECONDS);
+			EventRouterExecutor headOfQueue = null;
 
-			if (headOfQueue == null){
-				EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::getExecutor::CREATING NEW ONE ::" + index.get());
-				headOfQueue = new EventRouterExecutorImpl(false, new SleeThreadFactory("Executor-EventRouterExecutor-"+ index), getSleeContainer(), index.get());
+			if (numberOfFreeExecutor == null){
+				Integer value = index.incrementAndGet() % executorsSize;
+				headOfQueue = allExecutors.get(value);
+				logger.trace("getExecutor(): there are no FREE executors, reusing number " + value);
+			} else {
+				logger.trace("getExecutor(): using FREE executor " + numberOfFreeExecutor);
+				headOfQueue = allExecutors.get(numberOfFreeExecutor);
 			}
+
 			EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::getExecutor::" +
 					headOfQueue.getNumber() + "::ach::" + activityContextHandle.getActivityHandle());
 			headOfQueue.setAssignationDate(new Date());
@@ -94,12 +105,16 @@ public class BlockingQueueEventRouterExecutorMapper extends AbstractEventRouterE
 		}
 	}
 
-	public void returnExecutor(EventRouterExecutor executor, ActivityContextHandle ach){
+	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach){
 		EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::returnExecutor::"
-				+ executor.getNumber() + "::ENTER::ach::" + ach.getActivityHandle());
-		long totalTime = new Date().getTime() - executor.getAssignationDate().getTime();
-		Boolean offerExecutor =	 sleeBlockingQueue.offer(executor);
-		EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::returnExecutor::" +
-				executor.getNumber() + "::offerResult::" + offerExecutor + "::useTime::" + totalTime + "::ach::" + ach.getActivityHandle());
+				+ executorNumber + "::ENTER::ach::" + ach.getActivityHandle());
+		long totalTime = new Date().getTime() - assignationDate.getTime();
+		if (!freeExecutors.contains(executorNumber)) {
+			Boolean offerExecutor = freeExecutors.offer(executorNumber);
+			EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::returnExecutor::" +
+					executorNumber + "::offerResult::" + offerExecutor + "::useTime::" + totalTime + "::ach::" + ach.getActivityHandle());
+		} else {
+			logger.trace("returnExecutor(): EXECUTOR already in LIST, nothing to do.");
+		}
 	}
 }
