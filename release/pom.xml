@@ -15,8 +15,8 @@
 	<version>7.0.0-SNAPSHOT</version>
 
 	<properties>
-		<core.scmVersion>7.1.77</core.scmVersion>
-		<core.scmVersionType>tag</core.scmVersionType>
+		<core.scmVersion>7.2.0-summa</core.scmVersion>
+		<core.scmVersionType>branch</core.scmVersionType>
 
 		<jdbc.scmVersion>7.1.14</jdbc.scmVersion>
 		<jdbc.scmVersionType>tag</jdbc.scmVersionType>
@@ -73,9 +73,12 @@
 									<checkoutDirectory>
 										${checkout.basedir}/core
 									</checkoutDirectory>
-									<connectionUrl>
+									<!-- connectionUrl>
 										scm:git:https://github.com/RestComm/jain-slee.git
-									</connectionUrl>
+									</connectionUrl -->
+                                    <connectionUrl>
+                                        scm:git:https://github.com/SummaNetworks/jain-slee.git
+                                    </connectionUrl>
 								</configuration>
 							</execution>
 						</executions>
@@ -105,9 +108,12 @@
 									<checkoutDirectory>
 										${checkout.basedir}/core
 									</checkoutDirectory>
-									<connectionUrl>
+									<!-- connectionUrl>
 										scm:git:https://github.com/RestComm/jain-slee.git
-									</connectionUrl>
+									</connectionUrl -->
+                                    <connectionUrl>
+                                        scm:git:https://github.com/SummaNetworks/jain-slee.git
+                                    </connectionUrl>
 								</configuration>
 							</execution>
 
