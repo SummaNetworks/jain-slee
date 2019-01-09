@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <project name="restcomm.release" default="release-wildfly" basedir=".">
 
+    <!--
+    Ejecutar esto antes del ant, para que funcionen las descargas por ssl.
+    export ANT_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
+    -->
+
+
 	<property environment="sys" />
 
 	<property name="release.version" value="7.2.0" />
@@ -118,27 +124,31 @@
 		<exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.restcomm.release}/../checkout/core">
 			<arg line="install -Dmaven.test.skip=true -Drelease.dir=${release.dir} -Djboss.home=${wildfly.home} -Djboss.path=../../${wildfly.home.relative.path} -Prelease,set-git-hash,${core.profiles}" />
 		</exec>
-		<exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.restcomm.release}/../checkout/core">
-			<arg line="${mvn.javadoc}:aggregate -DreportOutputDirectory=${release.dir}/docs/container -DdestDir=javadoc" />
-		</exec>
+		<!-- exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.restcomm.release}/../checkout/core">
+			<arg line="javadoc:aggregate -DreportOutputDirectory=${release.dir}/docs/container -DdestDir=javadoc" />
+		</exec -->
 	</target>
 
-	<target name="build-resources" depends="build-jdbc,build-sip,build-http,build-media,build-tftp,build-xcap,build-xmpp,build-diameter,build-ss7,build-smpp,build-statistics,build-javaee">
+    <target name="build-resources" depends="build-jdbc,build-sip,build-media,build-tftp,build-smpp,build-javaee">
+        <echo message="Build Resources"/>
+    </target>
+
+	<!-- target name="build-resources" depends="build-jdbc,build-sip,build-http,build-media,build-tftp,build-xcap,build-xmpp,build-diameter,build-ss7,build-smpp,build-statistics,build-javaee">
 		<echo message="Build Resources"/>
-	</target>
+	</target -->
 
 	<target name="build-package" description="builds a SLEE package, use package.name and javadoc.dirs to pass the package singularities">
 		<exec failonerror="true" executable="${mvn.executable}" dir="${packages.dir}/${package.name}">
 			<!--arg line="install -Drelease.dir=${release.dir} -Djboss.home=${tmp.jboss.home} -Djboss.path=../../${jboss.home.relative.path} -Dnode=${jboss.config} -Prelease,set-git-hash,${release.profile}" /-->
 			<arg line="install -Dmaven.test.skip=true -Drelease.dir=${release.dir} -Djboss.home=${tmp.wildfly.home} -Djboss.path=../../${wildfly.home.relative.path} -Prelease,set-git-hash,${release.profile}" />
 		</exec>
-		<for delimiter="," param="dir.name" list="${javadoc.dirs}">
+		<!-- for delimiter="," param="dir.name" list="${javadoc.dirs}">
 			<sequential>
 				<exec failonerror="true" executable="${mvn.executable}" dir="${packages.dir}/${package.name}/@{dir.name}">
 					<arg line="${mvn.javadoc}:aggregate -DreportOutputDirectory=${release.dir}/docs/@{dir.name} -DdestDir=javadoc" />
 				</exec>
 			</sequential>
-		</for>
+		</for -->
 	</target>
 
 	<target name="build-extra-package" description="builds a SLEE package, use package.name and javadoc.dirs to pass the package singularities">
@@ -146,13 +156,13 @@
 			<!--arg line="install -Drelease.dir=${release.dir} -Djboss.home=${tmp.jboss.home} -Djboss.path=../../${jboss.home.relative.path} -Dnode=${jboss.config} -Prelease,set-git-hash,${release.profile}" /-->
 			<arg line="install -Dmaven.test.skip=true -Drelease.dir=${release.dir} -Djboss.home=${tmp.wildfly.home} -Djboss.path=../../${wildfly.home.relative.path} -Pdu-wildfly,release-wildfly,set-git-hash,${release.profile}" />
 		</exec>
-		<for delimiter="," param="dir.name" list="${javadoc.dirs}">
+		<!-- for delimiter="," param="dir.name" list="${javadoc.dirs}">
 			<sequential>
 				<exec failonerror="true" executable="${mvn.executable}" dir="${packages.dir}/${package.name}/@{dir.name}">
 					<arg line="${mvn.javadoc}:aggregate -DreportOutputDirectory=${release.dir}/docs/@{dir.name} -DdestDir=javadoc" />
 				</exec>
 			</sequential>
-		</for>
+		</for -->
 	</target>
 
 	<target name="build-jdbc" description="">
@@ -259,7 +269,7 @@
 	</target>
 
 	<target name="release-wildfly-core-only" depends="clean,get-wildfly,unzip-wildfly,setup-wildfly,checkout-core-sources,
-											build-core,copy-core-asciidoc,build-sources-for-debug-zip">
+											build-core,build-sources-for-debug-zip">
 		<tstamp>
 			<format property="time.stamp" pattern="yyyyMMdd-HHmm" />
 		</tstamp>
@@ -395,8 +405,10 @@
 		</copy>
 	</target>
 
-	<target name="get-extra" depends="get-diameter,unzip-diameter,get-ss7,unzip-ss7,setup-ss7,get-smppext,unzip-smppext,setup-smppext">
+	<target name="get-extra" depends="get-smppext,unzip-smppext,setup-smppext">
 	</target>
+    <!-- target name="get-extra" depends="get-diameter,unzip-diameter,get-ss7,unzip-ss7,setup-ss7,get-smppext,unzip-smppext,setup-smppext">
+    </target -->
 
 	<available file="${ant.file.restcomm.release}/../${diameter.distro.zip.path}" property="got.diameter" />
 	<target name="get-diameter" unless="got.diameter">
