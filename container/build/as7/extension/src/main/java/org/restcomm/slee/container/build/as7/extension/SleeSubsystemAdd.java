@@ -37,7 +37,7 @@ class SleeSubsystemAdd extends AbstractBoottimeAddStepHandler {
     /** {@inheritDoc} */
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) throws OperationFailedException {
-        log.info("Populating the model");
+        log.info("Slee Subsystem: Populating the model");
         //model.setEmptyObject();
         for (AttributeDefinition ad : SleeSubsystemDefinition.ATTRIBUTES) {
             ad.validateAndSet(operation, model);
@@ -45,9 +45,49 @@ class SleeSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     /** {@inheritDoc} */
+//    @Override
+//    public void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+//            ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
+//            throws OperationFailedException {
+//
+//        // Add deployment processors here
+//        // Remove this if you don't need to hook into the deployers, or you can add as many as you like
+//        // see SubDeploymentProcessor for explanation of the phases
+//        context.addStep(new AbstractDeploymentChainStep() {
+//            public void execute(DeploymentProcessorTarget processorTarget) {
+//                processorTarget.addDeploymentProcessor(SleeExtension.SUBSYSTEM_NAME,
+//                        SleeDeploymentParseProcessor.PHASE,
+//                        SleeDeploymentParseProcessor.PRIORITY,
+//                        new SleeDeploymentParseProcessor());
+//                processorTarget.addDeploymentProcessor(SleeExtension.SUBSYSTEM_NAME,
+//                        SleeDeploymentInstallProcessor.PHASE,
+//                        SleeDeploymentInstallProcessor.PRIORITY,
+//                        new SleeDeploymentInstallProcessor());
+//            }
+//        }, OperationContext.Stage.RUNTIME);
+//
+//        ModelNode fullModel = Resource.Tools.readModel(context.readResource(PathAddress.EMPTY_ADDRESS));
+//
+//        final ModelNode cacheConfigModel = SleeSubsystemDefinition.CACHE_CONFIG.resolveModelAttribute(context, model);
+//        final String cacheConfig = cacheConfigModel.isDefined() ? cacheConfigModel.asString() : null;
+//
+//    	// Installs the msc service which builds the SleeContainer instance and its modules
+//        final ServiceTarget target = context.getServiceTarget();
+//        final SleeContainerService sleeContainerService = new SleeContainerService(fullModel, cacheConfig);
+//
+//        final ServiceBuilder<?> sleeContainerServiceBuilder = target
+//                .addService(SleeServiceNames.SLEE_CONTAINER, sleeContainerService)
+//                .addDependency(PathManagerService.SERVICE_NAME, PathManager.class, sleeContainerService.getPathManagerInjector())
+//                .addDependency(MBeanServerService.SERVICE_NAME, MBeanServer.class, sleeContainerService.getMbeanServer())
+//                .addDependency(TransactionManagerService.SERVICE_NAME, TransactionManager.class, sleeContainerService.getTransactionManager())
+//                .addDependency(DataSourceReferenceFactoryService.SERVICE_NAME_BASE.append("ExampleDS"),
+//                        ManagedReferenceFactory.class, sleeContainerService.getManagedReferenceFactory());
+//
+//        newControllers.add(sleeContainerServiceBuilder.setInitialMode(Mode.ACTIVE).install());
+//    }
+
     @Override
-    public void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-            ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
+    public void performBoottime(OperationContext context, ModelNode operation, ModelNode model)
             throws OperationFailedException {
 
         // Add deployment processors here
@@ -70,8 +110,8 @@ class SleeSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final ModelNode cacheConfigModel = SleeSubsystemDefinition.CACHE_CONFIG.resolveModelAttribute(context, model);
         final String cacheConfig = cacheConfigModel.isDefined() ? cacheConfigModel.asString() : null;
-        
-    	// Installs the msc service which builds the SleeContainer instance and its modules
+
+        // Installs the msc service which builds the SleeContainer instance and its modules
         final ServiceTarget target = context.getServiceTarget();
         final SleeContainerService sleeContainerService = new SleeContainerService(fullModel, cacheConfig);
 
@@ -83,7 +123,7 @@ class SleeSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .addDependency(DataSourceReferenceFactoryService.SERVICE_NAME_BASE.append("ExampleDS"),
                         ManagedReferenceFactory.class, sleeContainerService.getManagedReferenceFactory());
 
-        newControllers.add(sleeContainerServiceBuilder.setInitialMode(Mode.ACTIVE).install());
+        sleeContainerServiceBuilder.setInitialMode(Mode.ACTIVE).install();
     }
     
 }

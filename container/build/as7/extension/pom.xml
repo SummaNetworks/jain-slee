@@ -23,8 +23,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
+                    <verbose>true</verbose>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -540,8 +541,8 @@
 					xmlns="urn:infinispan:config:8.1">
 						&lt;cache-container default-cache="slee-default" statistics="false" shutdown-hook="DONT_REGISTER">
 							&lt;transport cluster="jslee-cluster"/>
-							&lt;replicated-cache name="slee-default" mode="SYNC">
-								&lt;transaction locking="PESSIMISTIC" mode="FULL_XA"/>
+							&lt;replicated-cache name="slee-default" mode="ASYNC">
+								&lt;transaction locking="OPTIMISTIC" mode="NON_XA"/>
 							&lt;/replicated-cache>
 					&lt;/cache-container>
 				&lt;/infinispan>
@@ -588,7 +589,18 @@
         </subsystem>
 	</profile>]]></replacevalue>
 										</replace>
-									</tasks>
+
+                                        <!-- Add some classes to allow configure sctp by stack ra -->
+                                        <replace
+                                                file="${jboss.home}/modules/system/layers/base/sun/jdk/main/module.xml">
+                                            <replacetoken><![CDATA[<paths>]]></replacetoken>
+                                            <replacevalue><![CDATA[
+            <paths>
+                <path name="com/sun/nio"/>
+                <path name="com/sun/nio/sctp"/>]]></replacevalue>
+                                        </replace>
+
+                                    </tasks>
 								</configuration>
 							</execution>
 							<execution>

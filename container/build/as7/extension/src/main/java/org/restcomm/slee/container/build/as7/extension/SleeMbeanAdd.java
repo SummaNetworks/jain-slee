@@ -27,14 +27,14 @@ class SleeMbeanAdd extends AbstractAddStepHandler {
         //}
     }
 
-    @Override
-    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model,
-                                  ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
-            throws OperationFailedException {
-
-        final PathAddress address = PathAddress.pathAddress(operation.get(OP_ADDR));
-        final String mbeanName = address.getLastElement().getValue();
-
-        // here we can add mbeans with reflection usage
-    }
+//    @Override
+//    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model,
+//                                  ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
+//            throws OperationFailedException {
+//
+//        final PathAddress address = PathAddress.pathAddress(operation.get(OP_ADDR));
+//        final String mbeanName = address.getLastElement().getValue();
+//
+//        // here we can add mbeans with reflection usage
+//    }
 }

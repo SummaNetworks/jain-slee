@@ -27,8 +27,8 @@
 		<jain-slee-11-ext.version>${project.version}</jain-slee-11-ext.version>
 
 		<!--<version.jboss.as>7.2.0.Final</version.jboss.as>-->
-		<version.wildfly.as>10.1.0.Final</version.wildfly.as>
-		<version.wildfly.core>2.2.0.Final</version.wildfly.core>
+		<version.wildfly.as>15.0.1.Final</version.wildfly.as>
+		<version.wildfly.core>7.0.0.CR1</version.wildfly.core>
 
 		<!--<version.jboss.msc>1.0.4.GA</version.jboss.msc>-->
 		<version.jboss.msc>1.2.6.Final</version.jboss.msc>
@@ -38,10 +38,10 @@
 		<!--<version.hibernate>4.2.0.CR1</version.hibernate>-->
 		<version.hibernate>5.0.10.Final</version.hibernate>
 
-		<version.jgoups>3.6.10.Final</version.jgoups>
+		<version.jgoups>4.0.15.Final</version.jgoups>
 		<restcomm.cluster.version>7.0.0.16</restcomm.cluster.version>
-		<version.infinispan>8.1.2.Final-redhat-1</version.infinispan>
-		<version.infinispan.tree>8.1.2.Final</version.infinispan.tree>
+		<version.infinispan>9.4.2.Final</version.infinispan>
+		<version.infinispan.tree>9.4.2.Final</version.infinispan.tree>
 		<version.jboss.logging>3.3.0.Final-redhat-1</version.jboss.logging>
 
 		<!--<version.vfs>3.2.0.Final</version.vfs>-->
