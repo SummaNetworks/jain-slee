@@ -596,16 +596,6 @@ public class ActivityContextImpl implements ActivityContext {
 							.getActivityHandle());
 		}
 
-		logger.debug("ActivityContextImpl::ReturnExecutor::" + eventRouterExecutor.getNumber());
-		EventRouterExecutor.executorLogger.debug("ActivityContextImpl::ReturnExecutor::" + eventRouterExecutor.getNumber());
-		Integer queueSize = eventRouterExecutor.getQueueSize();
-		if (queueSize <= 0) {
-			sleeContainer.getEventRouter().getEventRouterExecutorMapper().returnExecutor(eventRouterExecutor.getNumber(),
-					eventRouterExecutor.getAssignationDate(), this.getActivityContextHandle());
-		} else {
-			logger.debug("activityEnded(): there are more jobs on the QUEUE not returning EXECUTOR "
-					+ eventRouterExecutor.getNumber() + ", queue size , " + queueSize);
-		}
 	}
 
 	private void fireEvent(EventContext event, TransactionContext txContext) {
