@@ -145,9 +145,17 @@ public class HandleSbbRollback {
 					// This was set to DOES_NOT_EXIST here because
 					// unsetSbbContext
 					// should not be called in this case.
-					sbbEntity.getSbbObject().setState(
-							SbbObjectState.DOES_NOT_EXIST);
-					pool.invalidateObject(sbbEntity.getSbbObject());
+
+                    //2019-07-9 Summa mod:
+                    // Instead of invaliate, return to pool objects.
+//					sbbEntity.getSbbObject().setState(
+//							SbbObjectState.DOES_NOT_EXIST);
+//					pool.invalidateObject(sbbEntity.getSbbObject());
+                    sbbEntity.getSbbObject().setState(SbbObjectState.POOLED);
+                    sbbEntity.getSbbObject().sbbPassivate();
+                    sbbEntity.getSbbObject().setSbbEntity(null);
+                    pool.returnObject(sbbEntity.getSbbObject());
+                    //2019-07-9 Summa mod end.
 				}
 
 				sbbEntity.assignSbbObject();
