@@ -43,7 +43,8 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 * index use to iterate the executor's array
 	 */
 	protected AtomicInteger index = null;
-	
+	protected AtomicInteger httpIndex = null;
+
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
@@ -53,6 +54,17 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 		//reset index
 		index = new AtomicInteger(0);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
+	 */
+	@Override
+	public void setHttpExecutors(EventRouterExecutor[] executors) {
+		super.setHttpExecutors(executors);
+		//reset index
+		httpIndex = new AtomicInteger(0);
+	}
+
 
 	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach) {
 		//Nothing to do
@@ -71,7 +83,21 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
                 return next-1;
         }
 	}
-	
+
+	/**
+	 * Computes the index of the next executor to retrieve. Adaptation of the {@link AtomicInteger} incrementAndGet() code.
+	 *
+	 * @return
+	 */
+	private int getNextHttpIndex() {
+		for (;;) {
+			int current = httpIndex.get();
+			int next = (current == httpExecutors.length ? 1 : current + 1);
+			if (httpIndex.compareAndSet(current, next))
+				return next-1;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
 	 */
@@ -81,4 +107,13 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 		return executors[getNextIndex()];
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	@Override
+	public EventRouterExecutor getHttpExecutor(
+			ActivityContextHandle activityContextHandle) {
+		return httpExecutors[getNextHttpIndex()];
+	}
 }

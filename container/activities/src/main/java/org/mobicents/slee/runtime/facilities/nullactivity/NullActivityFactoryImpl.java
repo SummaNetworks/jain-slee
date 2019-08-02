@@ -67,6 +67,16 @@ public class NullActivityFactoryImpl extends AbstractSleeContainerModule
 
 	/*
 	 * (non-Javadoc)
+	 *
+	 * @see javax.slee.nullactivity.NullActivityFactory#createNullActivity()
+	 */
+	public NullActivity createNullHttpActivity()
+			throws TransactionRequiredLocalException, FactoryException {
+		return createNullActivity(createNullHttpActivityHandle(), true);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * org.mobicents.slee.runtime.facilities.nullactivity.NullActivityFactory
@@ -74,7 +84,19 @@ public class NullActivityFactoryImpl extends AbstractSleeContainerModule
 	 */
 	public NullActivityHandleImpl createNullActivityHandle() {
 		return new NullActivityHandleImpl(sleeContainer.getUuidGenerator()
-				.createUUID());
+				.createUUID(), false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.mobicents.slee.runtime.facilities.nullactivity.NullActivityFactory
+	 * #createNullActivityHandle()
+	 */
+	public NullActivityHandleImpl createNullHttpActivityHandle() {
+		return new NullActivityHandleImpl(sleeContainer.getUuidGenerator()
+				.createUUID(), true);
 	}
 
 	/*

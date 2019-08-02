@@ -44,6 +44,13 @@ public interface EventRouterExecutorMapper {
 	 */
 	void setExecutors(EventRouterExecutor[] executors);
 
+
+	/**
+	 *
+	 * @param executors
+	 */
+	void setHttpExecutors(EventRouterExecutor[] executors);
+
 	/**
 	 * Retrieves the executor for the activity context with the specified
 	 * handle.
@@ -52,6 +59,16 @@ public interface EventRouterExecutorMapper {
 	 * @return
 	 */
 	EventRouterExecutor getExecutor(ActivityContextHandle activityContextHandle);
+
+
+	/**
+	 * Retrieves the executor for the activity context with the specified
+	 * handle.
+	 *
+	 * @param activityContextHandle
+	 * @return
+	 */
+	EventRouterExecutor getHttpExecutor(ActivityContextHandle activityContextHandle);
 
 	/**
 	 * Returns an executor to the EventRouterExecutor

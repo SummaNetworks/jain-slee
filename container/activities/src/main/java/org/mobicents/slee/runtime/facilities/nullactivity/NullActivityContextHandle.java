@@ -147,7 +147,7 @@ public class NullActivityContextHandle implements ActivityContextHandle {
 	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
-		this.activityHandle = new NullActivityHandleImpl(in.readUTF());
+		this.activityHandle = new NullActivityHandleImpl(in.readUTF(), in.readBoolean());
 	}
 
 	/*
@@ -158,6 +158,7 @@ public class NullActivityContextHandle implements ActivityContextHandle {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeUTF(((NullActivityHandleImpl) activityHandle).getId());
+		out.writeBoolean(((NullActivityHandleImpl) activityHandle).isHttpRequest());
 	}
 
 }

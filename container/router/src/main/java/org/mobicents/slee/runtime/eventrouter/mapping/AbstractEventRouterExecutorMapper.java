@@ -41,6 +41,7 @@ public abstract class AbstractEventRouterExecutorMapper implements
 		EventRouterExecutorMapper {
 
 	protected EventRouterExecutor[] executors;
+	protected EventRouterExecutor[] httpExecutors;
 
 	/*
 	 * (non-Javadoc)
@@ -54,6 +55,16 @@ public abstract class AbstractEventRouterExecutorMapper implements
 
 	/*
 	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.mobicents.slee.runtime.eventrouter.mapping.EventRouterExecutorMapper
+	 * #getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	public abstract EventRouterExecutor getHttpExecutor(
+			ActivityContextHandle activityContextHandle);
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * org.mobicents.slee.runtime.eventrouter.mapping.EventRouterExecutorMapper
@@ -61,7 +72,24 @@ public abstract class AbstractEventRouterExecutorMapper implements
 	 * (org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	public void setExecutors(EventRouterExecutor[] executors) {
-		this.executors = executors;
+		if (this.executors == null) {
+			this.executors = executors;
+		} else {
+			this.httpExecutors = executors;
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.mobicents.slee.runtime.eventrouter.mapping.EventRouterExecutorMapper
+	 * #setExecutors
+	 * (org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
+	 */
+	public void setHttpExecutors(EventRouterExecutor[] executors) {
+		this.httpExecutors = executors;
 	}
 
 	public abstract void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach);

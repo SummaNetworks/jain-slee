@@ -54,6 +54,20 @@ public class ActivityHashingEventRouterExecutorMapper extends
 				% executors.length];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @seeorg.mobicents.slee.runtime.eventrouter.mapping.
+	 * AbstractEventRouterExecutorMapper
+	 * #getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	@Override
+	public EventRouterExecutor getHttpExecutor(
+			ActivityContextHandle activityContextHandle) {
+		return httpExecutors[(activityContextHandle.hashCode() & Integer.MAX_VALUE)
+				% httpExecutors.length];
+	}
+
 	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach) {
 		//Nothing to do
 	}

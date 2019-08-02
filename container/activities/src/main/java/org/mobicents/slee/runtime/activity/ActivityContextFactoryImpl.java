@@ -39,6 +39,8 @@ import org.mobicents.slee.container.activity.ActivityType;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
 import org.mobicents.slee.container.transaction.TransactionContext;
 import org.mobicents.slee.container.transaction.TransactionalAction;
+import org.mobicents.slee.runtime.facilities.nullactivity.NullActivityHandleImpl;
+import org.mobicents.slee.runtime.facilities.nullactivity.NullActivityImpl;
 
 /**
  * Activity context factory -- return an activity context given an activity or
@@ -102,12 +104,25 @@ public class ActivityContextFactoryImpl extends AbstractSleeContainerModule impl
 	LocalActivityContextImpl getLocalActivityContext(ActivityContextImpl ac) {
 		final ActivityContextHandle ach = ac.getActivityContextHandle();
 		LocalActivityContextImpl localActivityContext = localActivityContexts.get(ach);
+		boolean isHttpRequest = false;
 		if (localActivityContext == null) {
 			final LocalActivityContextImpl newLocalActivityContext = new LocalActivityContextImpl(ach, ac.getActivityFlags(), ac.getStringID(), this);
 			localActivityContext = localActivityContexts.putIfAbsent(ach,newLocalActivityContext);
 			if (localActivityContext == null) {
 				localActivityContext = newLocalActivityContext;
-				final EventRouterExecutor executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
+
+				if (ach.getActivityObject() instanceof NullActivityImpl) {
+					isHttpRequest = ((NullActivityHandleImpl) ach.getActivityHandle()).isHttpRequest();
+				}
+
+				final EventRouterExecutor executor;
+				if (isHttpRequest){
+					logger.info("We have an HTTP REQUEST!!!");
+					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
+				} else {
+					logger.info("We DO NOT have an HTTP REQUEST!!!");
+					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
+				}
 				localActivityContext.setExecutorService(executor);
 				executor.activityMapped(ach);
 				TransactionContext txContext = sleeContainer.getTransactionManager().getTransactionContext();

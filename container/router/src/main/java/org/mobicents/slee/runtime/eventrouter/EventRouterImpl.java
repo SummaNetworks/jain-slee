@@ -44,7 +44,8 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 	 * The array of {@link EventRouterExecutor}s that are used to route events
 	 */
 	private EventRouterExecutor[] executors;
-		
+	private EventRouterExecutor[] httpExecutors;
+
 	/**
 	 * Maps executors to activities.
 	 */
@@ -78,16 +79,31 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 				executor.shutdown();
 			}
 		}
+
+		if (this.httpExecutors != null) {
+			for (EventRouterExecutor executor : this.httpExecutors) {
+				executor.shutdown();
+			}
+		}
+
 		// create new ones
 		this.executors = new EventRouterExecutor[configuration.getEventRouterThreads()];
 		for (int i = 0; i < configuration.getEventRouterThreads(); i++) {
 			this.executors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-EventRouterExecutor-"+i), sleeContainer, i);
 		}
+
+		// create new ones
+		this.httpExecutors = new EventRouterExecutor[configuration.getEventRouterThreads()];
+		for (int i = 0; i < configuration.getEventRouterThreads(); i++) {
+			this.httpExecutors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-HTTPEventRouterExecutor-"+i), sleeContainer, i);
+		}
+
 		// create mapper
 		try {
 			Class<?> executorMapperClass = Class.forName(configuration.getExecutorMapperClassName());
 			executorMapper = (EventRouterExecutorMapper) executorMapperClass.newInstance();
 			executorMapper.setExecutors(executors);
+			executorMapper.setHttpExecutors(httpExecutors);
 		} catch (Throwable e) {
 			throw new IllegalStateException("Unable to create event router executor mapper class instance",e);
 		}		
