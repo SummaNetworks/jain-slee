@@ -64,29 +64,35 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<profiles>
-		<profile>
-			<id>maven-release</id>
-			<modules>
-				<module>docs</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>release</id>
-			<modules>
-				<module>docs</module>
-			</modules>			
-		</profile>
-		<profile>
-			<id>telscale</id>
-			<properties>
-				<slee.name>Telscale JAIN SLEE</slee.name>
-				<slee.vendor>Telestax</slee.vendor>
-			</properties>			
-		</profile>		
-	</profiles>
+
+	<distributionManagement>
+
+		<repository>
+			<id>onevox</id>
+			<name>Onevox Repository</name>
+			<url>dav:https://devel.onevox.io/repository</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>dav:https://devel.onevox.io/repository-snapshots</url>
+		</snapshotRepository>
+
+		<site>
+			<id>onevox</id>
+			<name>Onevox archive</name>
+			<url>dav:http://devel.onevox.io/archive/${project.artifactId}/${project.version}</url>
+		</site>
+	</distributionManagement>
+
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav-jackrabbit</artifactId>
+				<version>1.0</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -103,7 +109,205 @@
 					<eclipseProjectName>slee-core-container</eclipseProjectName>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.2</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>restcomm-releases-repository</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+				</configuration>
+				<executions>
+					<execution>
+						<id>deploy-to-sonatype</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 	</build>
+
+
+	<profiles>
+		<!-- maven release profile, add all existent modules that build properly, so pom versions are updated and artifacts released -->
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>jmx-property-editors</module>
+				<module>deployer</module>
+				<module>spi</module>
+				<module>common</module>
+				<module>usage</module>
+				<module>activities</module>
+				<module>events</module>
+				<module>profiles</module>
+				<module>remote</module>
+				<module>router</module>
+				<module>transaction</module>
+				<module>components</module>
+				<module>fault-tolerant-ra</module>
+				<module>resource</module>
+				<module>timers</module>
+				<module>services</module>
+				<module>congestion</module>
+				<module>ant-tasks</module>
+				<module>standard-components</module>
+				<module>server-resources</module>
+				<module>server-default-beans</module>
+				<module>server-all-beans</module>
+			</modules>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.2</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>restcomm-releases-repository</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+						</configuration>
+						<executions>
+							<execution>
+								<id>deploy-to-sonatype</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<preparationGoals>clean install</preparationGoals>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- binary release profile, add only modules that are included in the binary -->
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>jmx-property-editors</module>
+				<module>deployer</module>
+				<module>spi</module>
+				<module>common</module>
+				<module>usage</module>
+				<module>activities</module>
+				<module>events</module>
+				<module>profiles</module>
+				<module>remote</module>
+				<module>router</module>
+				<module>transaction</module>
+				<module>components</module>
+				<module>fault-tolerant-ra</module>
+				<module>resource</module>
+				<module>timers</module>
+				<module>services</module>
+				<module>congestion</module>
+				<module>ant-tasks</module>
+				<module>standard-components</module>
+				<module>server-resources</module>
+				<module>server-default-beans</module>
+				<module>server-all-beans</module>
+			</modules>
+
+		</profile>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>install</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.1.2</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.2</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>restcomm-releases-repository</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+							<skipStaging>true</skipStaging>
+						</configuration>
+						<executions>
+							<execution>
+								<id>deploy-to-sonatype</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>onevox</id>
+			<name>Onevox repository</name>
+			<url>http://devel.onevox.io/repository</url>
+		</repository>
+		<repository>
+			<id>snapshots</id>
+			<url>https://devel.onevox.io/repository-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>restcomm-public-repository-group</id>
+			<name>Restcomm Public Maven Repository Group</name>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+
+		<!-- the place to extra repos -->
+	</repositories>
 
 </project>

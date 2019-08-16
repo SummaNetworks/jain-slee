@@ -33,7 +33,7 @@ import org.mobicents.slee.runtime.facilities.nullactivity.NullActivityHandleImpl
 public class ActivityContextHandleEncodingTest extends TestCase {
 
   public void testEncodeAndDecode() {
-    ActivityContextHandle ach = new NullActivityContextHandle(new NullActivityHandleImpl("jUnitHandle"));
+    ActivityContextHandle ach = new NullActivityContextHandle(new NullActivityHandleImpl("jUnitHandle", false));
     JmxActivityContextHandle achJmx = ActivityContextHandleSerializer.encode(ach);
     ActivityContextHandle achCopy = ActivityContextHandleSerializer.decode(achJmx,null);
 
@@ -41,7 +41,7 @@ public class ActivityContextHandleEncodingTest extends TestCase {
   }
 
   public void testDecodeAndEncode() {
-    JmxActivityContextHandle achJmxDummy = ActivityContextHandleSerializer.encode(new NullActivityContextHandle(new NullActivityHandleImpl("jUnitHandle")));
+    JmxActivityContextHandle achJmxDummy = ActivityContextHandleSerializer.encode(new NullActivityContextHandle(new NullActivityHandleImpl("jUnitHandle", false)));
 
     JmxActivityContextHandle achJmx = new JmxActivityContextHandle(ActivityType.NULL, "jUnitSource", achJmxDummy.getActivityHandleBase64(), achJmxDummy.getActivityHandleToString());
     ActivityContextHandle ach = ActivityContextHandleSerializer.decode(achJmx,null);

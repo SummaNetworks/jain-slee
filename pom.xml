@@ -64,25 +64,55 @@
 	
 	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
 
+	<distributionManagement>
+
+		<repository>
+			<id>onevox</id>
+			<name>Onevox Repository</name>
+			<url>dav:https://devel.onevox.io/repository</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>dav:https://devel.onevox.io/repository-snapshots</url>
+		</snapshotRepository>
+
+		<site>
+			<id>onevox</id>
+			<name>Onevox archive</name>
+			<url>dav:http://devel.onevox.io/archive/${project.artifactId}/${project.version}</url>
+		</site>
+	</distributionManagement>
+
 	<repositories>
-                <repository>
-                        <id>restcomm-public-repository-group</id>
-                        <name>Restcomm Public Maven Repository Group</name>
-                        <url>https://oss.sonatype.org/content/groups/public</url>
-                        <layout>default</layout>
-                        <releases>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>true</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-                <repository>
-				    <id>java.net</id>
-				    <url>http://download.java.net/maven/2/</url>
-				</repository>
-        </repositories>
+		<repository>
+			<id>onevox</id>
+			<name>Onevox repository</name>
+			<url>http://devel.onevox.io/repository</url>
+		</repository>
+		<repository>
+			<id>snapshots</id>
+			<url>https://devel.onevox.io/repository-snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>restcomm-public-repository-group</id>
+			<name>Restcomm Public Maven Repository Group</name>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+
+		<!-- the place to extra repos -->
+	</repositories>
+
 	
 </project>
