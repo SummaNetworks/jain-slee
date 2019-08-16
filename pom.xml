@@ -28,7 +28,18 @@
 		<developerConnection>scm:git:git@github.com:SummaNetworks/jain-slee.git</developerConnection>
 		<url>https://github.com/SummaNetworks/jain-slee</url>
 	</scm>
-	
+
+
+	<build>
+	<extensions>
+		<extension>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-webdav-jackrabbit</artifactId>
+			<version>1.0</version>
+		</extension>
+	</extensions>
+
+	</build>
 	<profiles>
 		<profile>
 			<id>maven-release</id>
