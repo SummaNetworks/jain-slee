@@ -118,7 +118,7 @@ public class ActivityContextFactoryImpl extends AbstractSleeContainerModule impl
 				final EventRouterExecutor executor;
 				if (isHttpRequest){
 					logger.info("We have an HTTP REQUEST!!!");
-					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
+					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getHttpExecutor(ach);
 				} else {
 					logger.info("We DO NOT have an HTTP REQUEST!!!");
 					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
