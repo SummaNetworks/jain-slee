@@ -24,9 +24,9 @@
 	</modules>
 	
 	<scm>
-		<connection>scm:git:https://github.com/RestComm/jain-slee.git</connection>
-		<developerConnection>scm:git:git@github.com:RestComm/jain-slee.git</developerConnection>
-		<url>https://github.com/RestComm/jain-slee</url>
+		<connection>scm:git:https://github.com/SummaNetworks/jain-slee.git</connection>
+		<developerConnection>scm:git:git@github.com:SummaNetworks/jain-slee.git</developerConnection>
+		<url>https://github.com/SummaNetworks/jain-slee</url>
 	</scm>
 	
 	<profiles>
