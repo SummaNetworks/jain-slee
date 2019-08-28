@@ -38,6 +38,8 @@ public class EventRouterConfiguration implements
 			.getLogger(EventRouterConfiguration.class);
 
 	private Integer eventRouterThreads;
+	private Integer mapRouterThreads;
+	private Integer diameterRouterThreads;
 	private String executorMapperClassName;
 	private Boolean collectStats;
 	private boolean confirmSbbEntityAttachement;
@@ -58,7 +60,15 @@ public class EventRouterConfiguration implements
 	public int getEventRouterThreads() {
 		return eventRouterThreads;
 	}
-	
+
+	public int getDiameterRouterThreads(){
+		return diameterRouterThreads;
+	}
+
+	public int getMapRouterThreads(){
+		return mapRouterThreads;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.container.management.jmx.EventRouterConfigurationMBean#getExecutorMapperClassName()
 	 */
@@ -96,7 +106,31 @@ public class EventRouterConfiguration implements
 		}
 		this.eventRouterThreads = value;		
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.container.management.jmx.EventRouterConfigurationMBean#setEventRouterThreads(int)
+	 */
+	public void setMapRouterThreads(int value) {
+		if (this.mapRouterThreads != null) {
+			logger.warn("Setting mapRouterThreads property to "
+					+ value
+					+ ". If called with server running a stop and start is need to apply changes.");
+		}
+		this.mapRouterThreads = value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.container.management.jmx.EventRouterConfigurationMBean#setEventRouterThreads(int)
+	 */
+	public void setDiameterRouterThreads(int value) {
+		if (this.diameterRouterThreads != null) {
+			logger.warn("Setting diameterRouterThreads property to "
+					+ value
+					+ ". If called with server running a stop and start is need to apply changes.");
+		}
+		this.diameterRouterThreads = value;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.container.management.jmx.EventRouterConfigurationMBean#setExecutorMapperClassName(java.lang.String)
 	 */
@@ -123,4 +157,3 @@ public class EventRouterConfiguration implements
 			+ executorMapperClassName;
 	}
 }
-

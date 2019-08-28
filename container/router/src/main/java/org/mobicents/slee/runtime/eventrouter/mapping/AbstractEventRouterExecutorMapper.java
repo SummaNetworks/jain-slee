@@ -41,7 +41,9 @@ public abstract class AbstractEventRouterExecutorMapper implements
 		EventRouterExecutorMapper {
 
 	protected EventRouterExecutor[] executors;
-	protected EventRouterExecutor[] httpExecutors;
+	protected EventRouterExecutor[] mapExecutors;
+	protected EventRouterExecutor[] diameterExecutors;
+
 
 	/*
 	 * (non-Javadoc)
@@ -60,7 +62,17 @@ public abstract class AbstractEventRouterExecutorMapper implements
 	 * org.mobicents.slee.runtime.eventrouter.mapping.EventRouterExecutorMapper
 	 * #getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
 	 */
-	public abstract EventRouterExecutor getHttpExecutor(
+	public abstract EventRouterExecutor getMapExecutor(
+			ActivityContextHandle activityContextHandle);
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.mobicents.slee.runtime.eventrouter.mapping.EventRouterExecutorMapper
+	 * #getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	public abstract EventRouterExecutor getDiameterExecutor(
 			ActivityContextHandle activityContextHandle);
 
 	/*
@@ -72,12 +84,7 @@ public abstract class AbstractEventRouterExecutorMapper implements
 	 * (org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	public void setExecutors(EventRouterExecutor[] executors) {
-		if (this.executors == null) {
-			this.executors = executors;
-		} else {
-			this.httpExecutors = executors;
-		}
-
+		this.executors = executors;
 	}
 
 	/*
@@ -88,8 +95,13 @@ public abstract class AbstractEventRouterExecutorMapper implements
 	 * #setExecutors
 	 * (org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
-	public void setHttpExecutors(EventRouterExecutor[] executors) {
-		this.httpExecutors = executors;
+	public void setMapExecutors(EventRouterExecutor[] executors) {
+
+		this.mapExecutors = executors;
+	}
+
+	public void setDiameterExecutors(EventRouterExecutor[] executors) {
+		this.diameterExecutors = executors;
 	}
 
 	public abstract void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach);

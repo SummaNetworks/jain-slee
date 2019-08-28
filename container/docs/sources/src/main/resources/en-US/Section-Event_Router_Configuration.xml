@@ -63,6 +63,16 @@
 				    	    <entry>int</entry>
 				       		<entry>defines how many executors should be used by the Event Router, each bounds to a different thread</entry>
 					      </row>
+						<row>
+							<entry>mapRouterThreads</entry>
+							<entry>int</entry>
+							<entry>defines how many MAP executors should be used by the Event Router, each bounds to a different thread</entry>
+						</row>
+						<row>
+							<entry>diameterRouterThreads</entry>
+							<entry>int</entry>
+							<entry>defines how many DIAMETER executors should be used by the Event Router, each bounds to a different thread</entry>
+						</row>
 					      <row>
 					        <entry>collectStats</entry>
 					        <entry>boolean</entry>
@@ -91,4 +101,3 @@
 		</section>	
 		
 </section>
-	

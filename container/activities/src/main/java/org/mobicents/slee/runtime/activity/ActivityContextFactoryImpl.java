@@ -37,6 +37,7 @@ import org.mobicents.slee.container.activity.ActivityContextFactory;
 import org.mobicents.slee.container.activity.ActivityContextHandle;
 import org.mobicents.slee.container.activity.ActivityType;
 import org.mobicents.slee.container.eventrouter.EventRouterExecutor;
+import org.mobicents.slee.container.resource.ResourceAdaptorActivityContextHandle;
 import org.mobicents.slee.container.transaction.TransactionContext;
 import org.mobicents.slee.container.transaction.TransactionalAction;
 import org.mobicents.slee.runtime.facilities.nullactivity.NullActivityHandleImpl;
@@ -111,18 +112,24 @@ public class ActivityContextFactoryImpl extends AbstractSleeContainerModule impl
 			if (localActivityContext == null) {
 				localActivityContext = newLocalActivityContext;
 
-				if (ach.getActivityObject() instanceof NullActivityImpl) {
-					isHttpRequest = ((NullActivityHandleImpl) ach.getActivityHandle()).isHttpRequest();
-				}
-
 				final EventRouterExecutor executor;
-				if (isHttpRequest){
-					logger.info("We have an HTTP REQUEST!!!");
-					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getHttpExecutor(ach);
+
+				if (ach instanceof ResourceAdaptorActivityContextHandle){
+					String name = ((ResourceAdaptorActivityContextHandle)ach).getResourceAdaptorEntity().getName();
+					logger.debug("ResourceAdaptorActivityContextHandle with name " + name);
+					if (name.equals("DiameterSummaRA")){
+						logger.debug("This is a DiameterSummaRA REQUEST");
+						executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getDiameterExecutor(ach);
+					} else if (name.equals("M2MSummaRA")) {
+						logger.debug("This is an M2MSummaRA REQUEST");
+						executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getMapExecutor(ach);
+					} else {
+						executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
+					}
 				} else {
-					logger.info("We DO NOT have an HTTP REQUEST!!!");
 					executor = sleeContainer.getEventRouter().getEventRouterExecutorMapper().getExecutor(ach);
 				}
+
 				localActivityContext.setExecutorService(executor);
 				executor.activityMapped(ach);
 				TransactionContext txContext = sleeContainer.getTransactionManager().getTransactionContext();

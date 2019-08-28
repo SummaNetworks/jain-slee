@@ -43,7 +43,8 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 * index use to iterate the executor's array
 	 */
 	protected AtomicInteger index = null;
-	protected AtomicInteger httpIndex = null;
+	protected AtomicInteger mapIndex = null;
+	protected AtomicInteger diameterIndex = null;
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
@@ -59,10 +60,20 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
 	 */
 	@Override
-	public void setHttpExecutors(EventRouterExecutor[] executors) {
-		super.setHttpExecutors(executors);
+	public void setMapExecutors(EventRouterExecutor[] executors) {
+		super.setMapExecutors(executors);
 		//reset index
-		httpIndex = new AtomicInteger(0);
+		mapIndex = new AtomicInteger(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#setExecutors(org.mobicents.slee.runtime.eventrouter.EventRouterExecutor[])
+	 */
+	@Override
+	public void setDiameterExecutors(EventRouterExecutor[] executors) {
+		super.setDiameterExecutors(executors);
+		//reset index
+		diameterIndex = new AtomicInteger(0);
 	}
 
 
@@ -89,11 +100,25 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 	 *
 	 * @return
 	 */
-	private int getNextHttpIndex() {
+	private int getNextMapIndex() {
 		for (;;) {
-			int current = httpIndex.get();
-			int next = (current == httpExecutors.length ? 1 : current + 1);
-			if (httpIndex.compareAndSet(current, next))
+			int current = mapIndex.get();
+			int next = (current == mapExecutors.length ? 1 : current + 1);
+			if (mapIndex.compareAndSet(current, next))
+				return next-1;
+		}
+	}
+
+	/**
+	 * Computes the index of the next executor to retrieve. Adaptation of the {@link AtomicInteger} incrementAndGet() code.
+	 *
+	 * @return
+	 */
+	private int getNextDiameterIndex() {
+		for (;;) {
+			int current = diameterIndex.get();
+			int next = (current == diameterExecutors.length ? 1 : current + 1);
+			if (diameterIndex.compareAndSet(current, next))
 				return next-1;
 		}
 	}
@@ -107,13 +132,21 @@ public class RoundRobinEventRouterExecutorMapper extends AbstractEventRouterExec
 		return executors[getNextIndex()];
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	@Override
+	public EventRouterExecutor getMapExecutor(
+			ActivityContextHandle activityContextHandle) {
+		return mapExecutors[getNextMapIndex()];
+	}
 
 	/* (non-Javadoc)
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
 	 */
 	@Override
-	public EventRouterExecutor getHttpExecutor(
+	public EventRouterExecutor getDiameterExecutor(
 			ActivityContextHandle activityContextHandle) {
-		return httpExecutors[getNextHttpIndex()];
+		return diameterExecutors[getNextDiameterIndex()];
 	}
 }

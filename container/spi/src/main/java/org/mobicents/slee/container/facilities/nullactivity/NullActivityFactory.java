@@ -45,8 +45,6 @@ public interface NullActivityFactory extends SleeContainerModule, javax.slee.nul
 	public NullActivityHandle createNullActivityHandle();
 
 
-	public NullActivity createNullHttpActivity();
-
 	/**
 	 * Creates a new null activity for the specified handle.
 	 * 

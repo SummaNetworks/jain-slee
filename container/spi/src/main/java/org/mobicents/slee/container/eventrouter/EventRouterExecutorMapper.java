@@ -49,7 +49,13 @@ public interface EventRouterExecutorMapper {
 	 *
 	 * @param executors
 	 */
-	void setHttpExecutors(EventRouterExecutor[] executors);
+	void setMapExecutors(EventRouterExecutor[] executors);
+
+	/**
+	 *
+	 * @param executors
+	 */
+	void setDiameterExecutors(EventRouterExecutor[] executors);
 
 	/**
 	 * Retrieves the executor for the activity context with the specified
@@ -68,7 +74,16 @@ public interface EventRouterExecutorMapper {
 	 * @param activityContextHandle
 	 * @return
 	 */
-	EventRouterExecutor getHttpExecutor(ActivityContextHandle activityContextHandle);
+	EventRouterExecutor getMapExecutor(ActivityContextHandle activityContextHandle);
+
+	/**
+	 * Retrieves the executor for the activity context with the specified
+	 * handle.
+	 *
+	 * @param activityContextHandle
+	 * @return
+	 */
+	EventRouterExecutor getDiameterExecutor(ActivityContextHandle activityContextHandle);
 
 	/**
 	 * Returns an executor to the EventRouterExecutor

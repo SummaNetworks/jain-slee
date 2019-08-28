@@ -38,6 +38,20 @@ public interface EventRouterConfigurationMBean {
 	public int getEventRouterThreads();
 
 	/**
+	 * Retrieves the number of MAP event router threads.
+	 *
+	 * @return
+	 */
+	public int getMapRouterThreads();
+
+	/**
+	 * Retrieves the number of Diameter event router threads.
+	 *
+	 * @return
+	 */
+	public int getDiameterRouterThreads();
+
+	/**
 	 * 
 	 * @return
 	 */
@@ -65,6 +79,28 @@ public interface EventRouterConfigurationMBean {
 	 * @param value
 	 */
 	public void setEventRouterThreads(int value);
+
+	/**
+	 *
+	 * Sets the number of event router threads.
+	 *
+	 * Note that setting a different value for this method will only be
+	 * effective on server (re)start.
+	 *
+	 * @param value
+	 */
+	public void setMapRouterThreads(int value);
+
+	/**
+	 *
+	 * Sets the number of event router threads.
+	 *
+	 * Note that setting a different value for this method will only be
+	 * effective on server (re)start.
+	 *
+	 * @param value
+	 */
+	public void setDiameterRouterThreads(int value);
 
 	/**
 	 * 

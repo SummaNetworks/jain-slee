@@ -31,12 +31,7 @@ import org.mobicents.slee.runtime.eventrouter.stats.EventRouterExecutorStatistic
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 
@@ -109,7 +104,7 @@ public class EventRouterExecutorImpl implements EventRouterExecutor {
 	 * 
 	 */
 	public EventRouterExecutorImpl(boolean collectStats, ThreadFactory threadFactory, SleeContainer sleeContainer, Integer number) {
-		final LinkedBlockingQueue<Runnable> executorQueue = new LinkedBlockingQueue<Runnable>();
+		final BlockingQueue<Runnable> executorQueue = new ArrayBlockingQueue<Runnable>(10);
 		this.executor = new ThreadPoolExecutor(1, 1,
                         0L, TimeUnit.MILLISECONDS,
                         executorQueue, threadFactory);

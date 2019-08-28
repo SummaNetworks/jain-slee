@@ -109,11 +109,19 @@ public class BlockingQueueEventRouterExecutorMapper extends AbstractEventRouterE
 	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
 	 */
 	@Override
-	public EventRouterExecutor getHttpExecutor(
+	public EventRouterExecutor getMapExecutor(
 			ActivityContextHandle activityContextHandle) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.mobicents.slee.runtime.eventrouter.mapping.AbstractEventRouterExecutorMapper#getExecutor(org.mobicents.slee.runtime.activity.ActivityContextHandle)
+	 */
+	@Override
+	public EventRouterExecutor getDiameterExecutor(
+			ActivityContextHandle activityContextHandle) {
+		return null;
+	}
 
 	public void returnExecutor(Integer executorNumber, Date assignationDate, ActivityContextHandle ach){
 		EventRouterExecutor.executorLogger.debug("BlockingQueueEventRouterExecutorMapper::returnExecutor::"

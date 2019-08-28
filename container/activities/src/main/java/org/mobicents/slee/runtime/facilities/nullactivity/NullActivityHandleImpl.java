@@ -44,8 +44,6 @@ public class NullActivityHandleImpl implements NullActivityHandle {
 
 	private String id;
 
-	private boolean httpRequest;
-
 	/**
 	 * not to be used, needed due to externalizable
 	 */
@@ -57,9 +55,8 @@ public class NullActivityHandleImpl implements NullActivityHandle {
 	 * 
 	 * @param id
 	 */
-	public NullActivityHandleImpl(String id, boolean httpRequest) {
+	public NullActivityHandleImpl(String id) {
 		this.id = id;
-		this.httpRequest = httpRequest;
 	}
 
 	/**
@@ -137,9 +134,5 @@ public class NullActivityHandleImpl implements NullActivityHandle {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeUTF(id);
-	}
-
-	public boolean isHttpRequest() {
-		return httpRequest;
 	}
 }

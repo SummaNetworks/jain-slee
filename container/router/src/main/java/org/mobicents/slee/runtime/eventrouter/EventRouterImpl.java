@@ -44,7 +44,8 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 	 * The array of {@link EventRouterExecutor}s that are used to route events
 	 */
 	private EventRouterExecutor[] executors;
-	private EventRouterExecutor[] httpExecutors;
+	private EventRouterExecutor[] mapExecutors;
+	private EventRouterExecutor[] diameterExecutors;
 
 	/**
 	 * Maps executors to activities.
@@ -80,8 +81,14 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 			}
 		}
 
-		if (this.httpExecutors != null) {
-			for (EventRouterExecutor executor : this.httpExecutors) {
+		if (this.mapExecutors != null) {
+			for (EventRouterExecutor executor : this.mapExecutors) {
+				executor.shutdown();
+			}
+		}
+
+		if (this.diameterExecutors != null) {
+			for (EventRouterExecutor executor : this.diameterExecutors) {
 				executor.shutdown();
 			}
 		}
@@ -89,13 +96,19 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 		// create new ones
 		this.executors = new EventRouterExecutor[configuration.getEventRouterThreads()];
 		for (int i = 0; i < configuration.getEventRouterThreads(); i++) {
-			this.executors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-EventRouterExecutor-"+i), sleeContainer, i);
+			this.executors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("Exe-GEN-"+i), sleeContainer, i);
 		}
 
 		// create new ones
-		this.httpExecutors = new EventRouterExecutor[configuration.getEventRouterThreads()];
-		for (int i = 0; i < configuration.getEventRouterThreads(); i++) {
-			this.httpExecutors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("SLEE-HTTPEventRouterExecutor-"+i), sleeContainer, i);
+		this.mapExecutors = new EventRouterExecutor[configuration.getMapRouterThreads()];
+		for (int i = 0; i < configuration.getMapRouterThreads(); i++) {
+			this.mapExecutors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("Exe-MAP-"+i), sleeContainer, i);
+		}
+
+		// create new ones
+		this.diameterExecutors = new EventRouterExecutor[configuration.getDiameterRouterThreads()];
+		for (int i = 0; i < configuration.getDiameterRouterThreads(); i++) {
+			this.diameterExecutors[i] = new EventRouterExecutorImpl(configuration.isCollectStats(), new SleeThreadFactory("Exe-DIA-"+i), sleeContainer, i);
 		}
 
 		// create mapper
@@ -103,7 +116,8 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 			Class<?> executorMapperClass = Class.forName(configuration.getExecutorMapperClassName());
 			executorMapper = (EventRouterExecutorMapper) executorMapperClass.newInstance();
 			executorMapper.setExecutors(executors);
-			executorMapper.setHttpExecutors(httpExecutors);
+			executorMapper.setMapExecutors(mapExecutors);
+			executorMapper.setDiameterExecutors(diameterExecutors);
 		} catch (Throwable e) {
 			throw new IllegalStateException("Unable to create event router executor mapper class instance",e);
 		}		
@@ -140,6 +154,5 @@ public class EventRouterImpl extends AbstractSleeContainerModule implements Even
 
 	public EventRouterConfiguration getConfiguration() {
 		return configuration;
-	}	
-
+	}
 }
