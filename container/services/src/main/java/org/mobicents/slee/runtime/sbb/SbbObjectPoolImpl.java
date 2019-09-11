@@ -24,7 +24,7 @@ package org.mobicents.slee.runtime.sbb;
 
 import javax.slee.ServiceID;
 
-import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool2.ObjectPool;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.component.sbb.SbbComponent;
 import org.mobicents.slee.container.sbb.SbbObject;

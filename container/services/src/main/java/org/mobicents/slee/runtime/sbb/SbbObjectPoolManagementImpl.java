@@ -22,16 +22,14 @@
 
 package org.mobicents.slee.runtime.sbb;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.slee.SbbID;
 import javax.slee.ServiceID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPoolFactory;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.component.sbb.SbbComponent;
@@ -53,23 +51,27 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 	private final ConcurrentHashMap<ObjectPoolMapKey, SbbObjectPoolImpl> pools;
 	private final SleeContainer sleeContainer;
 
-	private GenericObjectPool.Config config;
+	private GenericObjectPoolConfig config;
+	private byte whenExhaustedAction;
 
 	public SbbObjectPoolManagementImpl(SleeContainer sleeContainer) {
 		this.sleeContainer = sleeContainer;
 		// create pool config mbean with default pool configuration
-		config = new GenericObjectPool.Config();
-		config.maxActive = -1;
-		config.maxIdle = 50;
-		config.maxWait = -1;
-		config.minEvictableIdleTimeMillis = 60000;
-		config.minIdle = 1;
-		config.numTestsPerEvictionRun = -1;
-		config.testOnBorrow = true;
-		config.testOnReturn = true;
-		config.testWhileIdle = false;
-		config.timeBetweenEvictionRunsMillis = 300000;
-		config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
+		config = new GenericObjectPoolConfig();
+		config.setMinIdle(50);
+		config.setMaxTotal(-1);
+
+//		config.maxActive = -1;
+//		config.maxIdle = 50;
+//		config.maxWait = -1;
+//		config.minEvictableIdleTimeMillis = 60000;
+//		config.minIdle = 1;
+//		config.numTestsPerEvictionRun = -1;
+//		config.testOnBorrow = true;
+//		config.testOnReturn = true;
+//		config.testWhileIdle = false;
+//		config.timeBetweenEvictionRunsMillis = 300000;
+//		config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
 		// create pools map
 		pools = new ConcurrentHashMap<ObjectPoolMapKey, SbbObjectPoolImpl>();
 	}
@@ -79,14 +81,14 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 	 * 
 	 * @return
 	 */
-	public GenericObjectPool.Config getPoolConfig() {
+	public GenericObjectPoolConfig getPoolConfig() {
 		return config;
 	}
 
 	/**
 	 * Defines the current pool configuration
 	 */
-	public void setPoolConfig(GenericObjectPool.Config config) {
+	public void setPoolConfig(GenericObjectPoolConfig config) {
 		this.config = config;
 	}
 
@@ -139,15 +141,19 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 	/**
 	 * 
 	 * @param serviceID
-	 * @param sbbID
+	 * @param sbbComponent
 	 */
 	private void createObjectPool(final ServiceID serviceID, final SbbComponent sbbComponent) {
 		// create the pool for the given SbbID
-		GenericObjectPoolFactory poolFactory = new GenericObjectPoolFactory(
-				new SbbObjectPoolFactory(serviceID,sbbComponent), config);
-		final ObjectPool objectPool = poolFactory.createPool();
+//		GenericObjectPoolFactory poolFactory = new GenericObjectPoolFactory(
+//				new SbbObjectPoolFactory(serviceID,sbbComponent), config);
+//		final ObjectPool objectPool = poolFactory.createPool();
+
+		final GenericObjectPool genericObjectPool = new GenericObjectPool(
+		        new SbbObjectPoolFactory(serviceID,sbbComponent),
+                config);
 		final SbbObjectPoolImpl oldObjectPool = pools.put(new ObjectPoolMapKey(serviceID,sbbComponent.getSbbID()),
-				new SbbObjectPoolImpl(sbbComponent,serviceID,objectPool));
+				new SbbObjectPoolImpl(sbbComponent,serviceID, genericObjectPool));
 		if (oldObjectPool != null) {
 			// there was an old pool, close it
 			try {
@@ -168,7 +174,8 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 	 * transaction manager is used then, and if the tx rollbacks, the pool will
 	 * be restored.
 	 * 
-	 * @param sbbDescriptor
+	 * @param serviceID
+     * @param sbbComponent
 	 * @param sleeTransactionManager
 	 * @throws Exception
 	 */
@@ -239,92 +246,97 @@ public class SbbObjectPoolManagementImpl implements SbbObjectPoolManagementImplM
 	}
 
 	public int getMaxActive() {
-		return config.maxActive;
+		return config.getMaxTotal();
 	}
 
 	public void setMaxActive(int maxActive) {
-		config.maxActive = maxActive;
+		config.setMaxTotal(maxActive);
 	}
 
 	public int getMaxIdle() {
-		return config.maxIdle;
+		return config.getMaxIdle();
 	}
 
 	public void setMaxIdle(int maxIdle) {
-		config.maxIdle = maxIdle;
+		config.setMaxIdle(maxIdle);
 	}
 
 	public int getMinIdle() {
-		return config.minIdle;
+		return config.getMinIdle();
 	}
 
 	public void setMinIdle(int minIdle) {
-		config.minIdle = minIdle;
+		config.setMinIdle(minIdle);
 	}
 
 	public long getMaxWait() {
-		return config.maxWait;
+		return config.getMaxWaitMillis();
 	}
 
 	public void setMaxWait(long maxWait) {
-		config.maxWait = maxWait;
+		config.setMaxWaitMillis(maxWait);
 	}
 
 	public long getMinEvictableIdleTimeMillis() {
-		return config.minEvictableIdleTimeMillis;
+		return config.getMinEvictableIdleTimeMillis();
 	}
 
 	public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis) {
-		config.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+		config.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
 	}
 
 	public int getNumTestsPerEvictionRun() {
-		return config.numTestsPerEvictionRun;
+		return config.getNumTestsPerEvictionRun();
 	}
 
 	public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
-		config.numTestsPerEvictionRun = numTestsPerEvictionRun;
+		config.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
 	}
 
 	public boolean getTestOnBorrow() {
-		return config.testOnBorrow;
+		return config.getTestOnBorrow();
 	}
 
 	public void setTestOnBorrow(boolean testOnBorrow) {
-		config.testOnBorrow = testOnBorrow;
+		config.setTestOnBorrow(testOnBorrow);
 	}
 
 	public boolean getTestOnReturn() {
-		return config.testOnReturn;
+		return config.getTestOnReturn();
 	}
 
 	public void setTestOnReturn(boolean testOnReturn) {
-		config.testOnReturn = testOnReturn;
+		config.setTestOnReturn(testOnReturn);
 	}
 
 	public boolean getTestWhileIdle() {
-		return config.testWhileIdle;
+		return config.getTestWhileIdle();
 	}
 
 	public void setTestWhileIdle(boolean testWhileIdle) {
-		config.testWhileIdle = testWhileIdle;
+		config.setTestWhileIdle(testWhileIdle);
 	}
 
 	public long getTimeBetweenEvictionRunsMillis() {
-		return config.timeBetweenEvictionRunsMillis;
+		return config.getTimeBetweenEvictionRunsMillis();
 	}
 
 	public void setTimeBetweenEvictionRunsMillis(
 			long timeBetweenEvictionRunsMillis) {
-		config.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+		config.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
 	}
 
 	public byte getWhenExhaustedAction() {
-		return config.whenExhaustedAction;
+		return whenExhaustedAction;
 	}
 
 	public void setWhenExhaustedAction(byte whenExhaustedAction) {
-		config.whenExhaustedAction = whenExhaustedAction;
+		this.whenExhaustedAction = whenExhaustedAction;
+        if(whenExhaustedAction == org.apache.commons.pool.impl.GenericObjectPool.WHEN_EXHAUSTED_BLOCK){
+            config.setBlockWhenExhausted(true);
+        }else{
+            config.setBlockWhenExhausted(false);
+        }
 	}
 
 	public void reconfig() {

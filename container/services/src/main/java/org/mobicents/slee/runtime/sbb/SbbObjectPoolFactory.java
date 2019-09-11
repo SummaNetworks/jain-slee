@@ -33,12 +33,13 @@
 
 package org.mobicents.slee.runtime.sbb;
 
+import javax.slee.ServiceID;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import javax.slee.ServiceID;
-
-import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.SleeContainerUtils;
 import org.mobicents.slee.container.component.sbb.SbbComponent;
@@ -52,7 +53,7 @@ import org.mobicents.slee.container.sbb.SbbObjectState;
  * @author F.Moggia
  * @author Eduardo Martins
  */
-public class SbbObjectPoolFactory implements PoolableObjectFactory {
+public class SbbObjectPoolFactory implements PooledObjectFactory<Object> {
 
 	private static Logger logger = Logger.getLogger(SbbObjectPoolFactory.class);
 	
@@ -67,11 +68,11 @@ public class SbbObjectPoolFactory implements PoolableObjectFactory {
         this.sbbComponent = sbbComponent;
     }
 
-    public void activateObject(Object obj) throws java.lang.Exception {
+    public void activateObject(PooledObject<Object> pooledObject) throws java.lang.Exception {
         /*
          * NOTE. We must not call sbbActivate in here This is because this
          * method would get called when borrowing an sbbObject in order to do a
-         * sbbCreate - in which case it is illegal to call sbbActivat before
+         * sbbCreate - in which case it is illegal to call sbbActivate before
          * sbbCreate - Tim
          */
     	
@@ -81,13 +82,13 @@ public class SbbObjectPoolFactory implements PoolableObjectFactory {
     	
     }
 
-    public void destroyObject(Object sbb) throws java.lang.Exception {
+    public void destroyObject(PooledObject<Object> pooledObject) throws java.lang.Exception {
     	
     	if (doTraceLogs) {
         	logger.trace("destroyObject() for "+sbbComponent);
         }
         
-        SbbObject sbbObject = (SbbObject) sbb;
+        SbbObject sbbObject = (SbbObject) pooledObject.getObject();
         final ClassLoader oldClassLoader = SleeContainerUtils
                 .getCurrentThreadClassLoader();
 
@@ -120,7 +121,7 @@ public class SbbObjectPoolFactory implements PoolableObjectFactory {
      * Create a new instance of this object and set the SbbContext This places
      * it into the object pool.
      */
-    public Object makeObject() {
+    public PooledObject<Object> makeObject() {
         
         SbbObject retval;
         if (doTraceLogs) {
@@ -159,22 +160,22 @@ public class SbbObjectPoolFactory implements PoolableObjectFactory {
         }
 
         retval.setState(SbbObjectState.POOLED);
-        
-        return retval;
+
+        return new DefaultPooledObject<Object>(retval);
     }
 
-    public void passivateObject(Object sbb) throws java.lang.Exception {
+    public void passivateObject(PooledObject<Object> pooledObject) throws java.lang.Exception {
     	
     	if (doTraceLogs) {
         	logger.trace("passivateObject() for "+sbbComponent);
     	}
     	
-        SbbObject sbbObj = (SbbObject) sbb;
+        SbbObject sbbObj = (SbbObject) pooledObject.getObject();
         sbbObj.setState(SbbObjectState.POOLED);         
     }
 
-    public boolean validateObject(Object sbbo) {
-       
+    public boolean validateObject(PooledObject<Object> pooledObject) {
+        Object sbbo = pooledObject.getObject();
     	boolean retval = ((SbbObject) sbbo).getState() == SbbObjectState.POOLED;
         
     	if (doTraceLogs) {
